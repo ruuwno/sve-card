@@ -1,3 +1,50 @@
+// === Bold parser and global patches ===
+(function() {
+  function parseBoldTags(input) {
+    return typeof input === "string" 
+      ? input.replace(/\/bold(.*?)\/bold/g, "<b>$1</b>")
+      : input;
+  }
+
+  // Patch innerHTML
+  Object.defineProperty(Element.prototype, "innerHTML", {
+    set: function(value) {
+      this.setAttribute("innerHTML", parseBoldTags(value));
+      this.replaceChildren();
+      this.insertAdjacentHTML("afterbegin", parseBoldTags(value));
+    },
+    get: function() {
+      return this.getAttribute("innerHTML") || "";
+    }
+  });
+
+  // Patch textContent
+  Object.defineProperty(Node.prototype, "textContent", {
+    set: function(value) {
+      this.innerHTML = parseBoldTags(value);
+    },
+    get: function() {
+      return this.innerHTML;
+    }
+  });
+
+  // Patch innerText
+  Object.defineProperty(HTMLElement.prototype, "innerText", {
+    set: function(value) {
+      this.innerHTML = parseBoldTags(value);
+    },
+    get: function() {
+      return this.innerHTML;
+    }
+  });
+
+  // Patch createTextNode
+  const _createTextNode = Document.prototype.createTextNode;
+  Document.prototype.createTextNode = function(str) {
+    return _createTextNode.call(this, parseBoldTags(str));
+  };
+})();
+
 ;(() => {
   var e,
     t,
@@ -36076,11 +36123,8 @@ object-assign
                       src: 'image/desc/portal.png',
                       height: 184,
                       width: 187
-                    },
-                    '/bold': {
-                      src: '<b><i>Torn Memory</i></b>',
-                      JPText: '<b><i>Torn Memory</i></b>'
                     }
+            
                   },
                   S =
                     ((0, o.keys)(k),
