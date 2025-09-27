@@ -52402,7 +52402,7 @@ object-assign
         rc = [
           { label: '系统默认', value: 'a' },
           { label: '日文', value: 'sve-card-ja' },
-          { label: '简体中文', value: 'sve-card-cn' }
+          { label: '简体中文', value: 'sve-card-cn' },
           { label: 'EN', value: 'sve-card-en' }
         ],
         oc = Xu(
