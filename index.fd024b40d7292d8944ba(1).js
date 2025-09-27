@@ -36078,8 +36078,7 @@ object-assign
                       width: 187
                     }
                   },
-                  // Custom non-image command
-text = text.replace(/\/bold-italic(.*?)\/bold-italic/g, "<b><i>$1</i></b>");
+
                   S =
                     ((0, o.keys)(k),
                     { handlePunctuation: !1, replaceKeyword: !1, isCHS: !1 }),
@@ -37996,37 +37995,50 @@ text = text.replace(/\/bold-italic(.*?)\/bold-italic/g, "<b><i>$1</i></b>");
                 }
                 const le = class {
                   constructor (e, t, n) {
-                    se(this, 'drawText', (e, t, n) => {
-                      var r, o
-                      null != e &&
-                        (this.assetManager.loadFont(t.fontFamily),
-                        this.canvasContext.save(),
-                        (this.canvasContext.font = ''
-                          .concat(
-                            t.fontWeight ? ''.concat(t.fontWeight, ' ') : ''
-                          )
-                          .concat(t.fontSize, 'px ')
-                          .concat(t.fontFamily)),
-                        t.textBaseline &&
-                          (this.canvasContext.textBaseline = t.textBaseline),
-                        t.textAlign &&
-                          (this.canvasContext.textAlign = t.textAlign),
-                        null == n || n(),
-                        t.shadowLine &&
-                          ((this.canvasContext.shadowColor =
-                            null !== (r = t.shadowColor) && void 0 !== r
-                              ? r
-                              : 'black'),
-                          (this.canvasContext.shadowBlur =
-                            null !== (o = t.shadowBlur) && void 0 !== o
-                              ? o
-                              : 0),
-                          (this.canvasContext.lineWidth = t.shadowLine),
-                          this.canvasContext.strokeText(e, ...t.position)),
-                        (this.canvasContext.fillStyle = t.color),
-                        this.canvasContext.fillText(e, ...t.position),
-                        this.canvasContext.restore())
-                    }),
+se(this, 'drawText', (e, t, n) => {
+  var r, o;
+  if (null != e) {
+    this.assetManager.loadFont(t.fontFamily);
+    this.canvasContext.save();
+    const baseFont = ''
+      .concat(
+        t.fontWeight ? ''.concat(t.fontWeight, ' ') : ''
+      )
+      .concat(t.fontSize, 'px ')
+      .concat(t.fontFamily);
+    this.canvasContext.font = baseFont;
+    if (t.textBaseline)
+      this.canvasContext.textBaseline = t.textBaseline;
+    if (t.textAlign)
+      this.canvasContext.textAlign = t.textAlign;
+    if (typeof n === 'function') n();
+    if (t.shadowLine) {
+      this.canvasContext.shadowColor =
+        t.shadowColor !== undefined ? t.shadowColor : 'black';
+      this.canvasContext.shadowBlur =
+        t.shadowBlur !== undefined ? t.shadowBlur : 0;
+      this.canvasContext.lineWidth = t.shadowLine;
+      this.canvasContext.strokeText(e, ...t.position);
+    }
+    // Custom non-image command: handle /bold-italic
+    const parts = e.split(/\/bold-italic/);
+    let x = t.position[0];
+    let y = t.position[1];
+    parts.forEach((part, i) => {
+      if (!part) return;
+      const isBoldItalic = i % 2 === 1;
+      this.canvasContext.font = isBoldItalic
+        ? `bold italic ${t.fontSize}px ${t.fontFamily}`
+        : baseFont;
+      this.canvasContext.fillStyle = t.color;
+      this.canvasContext.fillText(part, x, y);
+      x += this.canvasContext.measureText(part).width;
+    });
+    this.canvasContext.restore();
+  }
+});
+
+
                       se(
                         this,
                         'ctxMeasureTextWidth',
