@@ -36078,8 +36078,8 @@ object-assign
                       width: 187
                     },
                     '/bold': {
-                      src: <b><i>Torn Memory</i></b>,
-                      JPText: <b><i>Torn Memory</i></b>
+                      src: '<b><i>Torn Memory</i></b>',
+                      JPText: '<b><i>Torn Memory</i></b>'
                     }
                   },
                   S =
