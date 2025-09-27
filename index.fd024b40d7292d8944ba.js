@@ -36076,6 +36076,10 @@ object-assign
                       src: 'image/desc/portal.png',
                       height: 184,
                       width: 187
+                    },
+                    '/bold': {
+                      src: <b></b>,
+                      JPText: <b></b>
                     }
                   },
                   S =
